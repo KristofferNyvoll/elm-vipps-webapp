@@ -1,7 +1,8 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, h1, text)
+import Html.Attributes
 import Html.Events exposing (onClick)
 
 
@@ -31,18 +32,14 @@ init =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = Login
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
+        Login ->
             model + 1
-
-        Decrement ->
-            model - 1
 
 
 
@@ -51,8 +48,14 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+    div
+        [ Html.Attributes.style "width" "100%"
+        , Html.Attributes.style "align" "center"
+        ]
+        [ h1
+            [ Html.Attributes.style "margin" "auto"
+            , Html.Attributes.style "text-align" "center"
+            ]
+            [ text "Logg inn med vipps!" ]
+        , button [ onClick Login ] [ text "Logg inn" ]
         ]
