@@ -81,7 +81,7 @@ view _ =
         [ h1
             [ Html.Attributes.style "font-family" "sans-serif"
             ]
-            [ text "Logg inn med vipps!" ]
+            [ text "Logg inn med vipps så vet vi hvem du er!" ]
         , button
             [ onClick Login
             , Html.Attributes.style "width" "150px"
