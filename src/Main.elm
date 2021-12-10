@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Navigation
 import Html exposing (Html, button, div, h1, text)
 import Html.Attributes
 import Html.Events exposing (onClick)
@@ -10,36 +11,55 @@ import Html.Events exposing (onClick)
 -- MAIN
 
 
+main : Program () Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element { init = \() -> init, update = update, subscriptions = subscriptions, view = view }
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( WaitForLogin, Cmd.none )
 
 
 
--- MODEL
+-- Model
 
 
 type alias Model =
-    Int
+    Msg
 
 
-init : Model
-init =
-    0
+type Msg
+    = Login
+    | WaitForLogin
 
 
 
 -- UPDATE
 
 
-type Msg
-    = Login
+gotoVippsLogin : Cmd msg
+gotoVippsLogin =
+    Browser.Navigation.load "https://www.vg.no/"
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Msg -> Model -> ( Model, Cmd msg )
+update msg _ =
     case msg of
         Login ->
-            model + 1
+            ( Login, gotoVippsLogin )
+
+        WaitForLogin ->
+            ( WaitForLogin, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 
@@ -47,15 +67,29 @@ update msg model =
 
 
 view : Model -> Html Msg
-view model =
+view _ =
     div
         [ Html.Attributes.style "width" "100%"
         , Html.Attributes.style "align" "center"
+        , Html.Attributes.style "display" "flex"
+        , Html.Attributes.style "align-items" "center"
+        , Html.Attributes.style "height" "150px"
+        , Html.Attributes.style "flex-direction" "column"
+        , Html.Attributes.style "justify-content" "space-between"
+        , Html.Attributes.style "margin-top" "20%"
         ]
         [ h1
-            [ Html.Attributes.style "margin" "auto"
-            , Html.Attributes.style "text-align" "center"
+            [ Html.Attributes.style "font-family" "sans-serif"
             ]
             [ text "Logg inn med vipps!" ]
-        , button [ onClick Login ] [ text "Logg inn" ]
+        , button
+            [ onClick Login
+            , Html.Attributes.style "width" "150px"
+            , Html.Attributes.style "border-radius" "26px"
+            , Html.Attributes.style "height" "50px"
+            , Html.Attributes.style "font-family" "sans-serif"
+            , Html.Attributes.style "background-color" "#ff5b24"
+            , Html.Attributes.style "color" "#ffffff"
+            ]
+            [ text "Logg inn" ]
         ]
