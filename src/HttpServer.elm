@@ -7,7 +7,7 @@ import Http
 
 
 type alias Model =
-    { nicknames : List String
+    { result : String
     , errorMessage : Maybe String
     }
 
@@ -17,18 +17,18 @@ view model =
     div []
         [ button [ onClick SendHttpRequest ]
             [ text "Get data from server" ]
-        , viewNicknamesOrError model
+        , viewResultOrError model
         ]
 
 
-viewNicknamesOrError : Model -> Html Msg
-viewNicknamesOrError model =
+viewResultOrError : Model -> Html Msg
+viewResultOrError model =
     case model.errorMessage of
         Just message ->
             viewError message
 
         Nothing ->
-            viewNicknames model.nicknames
+            viewResult model.result
 
 
 viewError : String -> Html Msg
@@ -43,17 +43,9 @@ viewError errorMessage =
         ]
 
 
-viewNicknames : List String -> Html Msg
-viewNicknames nicknames =
-    div []
-        [ h3 [] [ text "Old School Main Characters" ]
-        , ul [] (List.map viewNickname nicknames)
-        ]
-
-
-viewNickname : String -> Html Msg
-viewNickname nickname =
-    li [] [ text nickname ]
+viewResult : String -> Html Msg
+viewResult result =
+    div [] [ text ("Result:" ++ result) ]
 
 
 type Msg
@@ -63,11 +55,11 @@ type Msg
 
 url : String
 url =
-    "http://localhost:5016/text.txt"
+    "https://apitest.vipps.no//access-management-1.0/access/.well-known/openid-configuration"
 
 
-getNicknames : Cmd Msg
-getNicknames =
+getResult : Cmd Msg
+getResult =
     Http.get
         { url = url
         , expect = Http.expectString DataReceived
@@ -78,14 +70,14 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendHttpRequest ->
-            ( model, getNicknames )
+            ( model, getResult )
 
-        DataReceived (Ok nicknamesStr) ->
+        DataReceived (Ok res) ->
             let
-                nicknames =
-                    String.split "," nicknamesStr
+                results =
+                    res
             in
-            ( { model | nicknames = nicknames }, Cmd.none )
+            ( { model | result = results }, Cmd.none )
 
         DataReceived (Err httpError) ->
             ( { model
@@ -116,7 +108,7 @@ buildErrorMessage httpError =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { nicknames = []
+    ( { result = ""
       , errorMessage = Nothing
       }
     , Cmd.none

@@ -5337,7 +5337,7 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$HttpServer$init = function (_v0) {
 	return _Utils_Tuple2(
-		{errorMessage: $elm$core$Maybe$Nothing, nicknames: _List_Nil},
+		{errorMessage: $elm$core$Maybe$Nothing, result: ''},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -6141,8 +6141,8 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$HttpServer$url = 'http://localhost:5016/text.txt';
-var $author$project$HttpServer$getNicknames = $elm$http$Http$get(
+var $author$project$HttpServer$url = 'https://apitest.vipps.no//access-management-1.0/access/.well-known/openid-configuration';
+var $author$project$HttpServer$getResult = $elm$http$Http$get(
 	{
 		expect: $elm$http$Http$expectString($author$project$HttpServer$DataReceived),
 		url: $author$project$HttpServer$url
@@ -6150,15 +6150,15 @@ var $author$project$HttpServer$getNicknames = $elm$http$Http$get(
 var $author$project$HttpServer$update = F2(
 	function (msg, model) {
 		if (msg.$ === 'SendHttpRequest') {
-			return _Utils_Tuple2(model, $author$project$HttpServer$getNicknames);
+			return _Utils_Tuple2(model, $author$project$HttpServer$getResult);
 		} else {
 			if (msg.a.$ === 'Ok') {
 				var nicknamesStr = msg.a.a;
-				var nicknames = A2($elm$core$String$split, ',', nicknamesStr);
+				var results = nicknamesStr;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{nicknames: nicknames}),
+						{result: results}),
 					$elm$core$Platform$Cmd$none);
 			} else {
 				var httpError = msg.a.a;
@@ -6213,43 +6213,22 @@ var $author$project$HttpServer$viewError = function (errorMessage) {
 				$elm$html$Html$text('Error: ' + errorMessage)
 			]));
 };
-var $elm$html$Html$ul = _VirtualDom_node('ul');
-var $elm$html$Html$li = _VirtualDom_node('li');
-var $author$project$HttpServer$viewNickname = function (nickname) {
-	return A2(
-		$elm$html$Html$li,
-		_List_Nil,
-		_List_fromArray(
-			[
-				$elm$html$Html$text(nickname)
-			]));
-};
-var $author$project$HttpServer$viewNicknames = function (nicknames) {
+var $author$project$HttpServer$viewResult = function (result) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Old School Main Characters')
-					])),
-				A2(
-				$elm$html$Html$ul,
-				_List_Nil,
-				A2($elm$core$List$map, $author$project$HttpServer$viewNickname, nicknames))
+				$elm$html$Html$text('Result:' + result)
 			]));
 };
-var $author$project$HttpServer$viewNicknamesOrError = function (model) {
+var $author$project$HttpServer$viewResultOrError = function (model) {
 	var _v0 = model.errorMessage;
 	if (_v0.$ === 'Just') {
 		var message = _v0.a;
 		return $author$project$HttpServer$viewError(message);
 	} else {
-		return $author$project$HttpServer$viewNicknames(model.nicknames);
+		return $author$project$HttpServer$viewResult(model.result);
 	}
 };
 var $author$project$HttpServer$view = function (model) {
@@ -6268,7 +6247,7 @@ var $author$project$HttpServer$view = function (model) {
 					[
 						$elm$html$Html$text('Get data from server')
 					])),
-				$author$project$HttpServer$viewNicknamesOrError(model)
+				$author$project$HttpServer$viewResultOrError(model)
 			]));
 };
 var $author$project$HttpServer$main = $elm$browser$Browser$element(
